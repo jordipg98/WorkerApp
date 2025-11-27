@@ -71,6 +71,31 @@ enum CarStatus {
 
     }
 
+    var buttonText: String {
+        switch self {
+        case .leavingRequested, .storingRequested: return "Accept Request"
+        case .exitingGarage, .storingCancelled: return "Wait for owner"
+        case .waitingPickup: return "Picked up"
+        case .toGarage, .leavingCancelled: return "In garage"
+        default: return ""
+        }
+    }
+
+    var nextStatus: CarStatus {
+        switch self {
+        case .leavingRequested: .exitingGarage
+        case .exitingGarage, .storingCancelled: .waitingPickup
+        case .storingRequested: .toGarage
+        case .toGarage, .leavingCancelled: .inGarage
+        case .waitingPickup: .outside
+        default: .unavailable
+        }
+    }
+
+    func statushaveToDismmiss() -> Bool {
+        [.outside, .inGarage].contains(self)
+    }
+
 
 
 

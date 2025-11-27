@@ -1,0 +1,393 @@
+openapi: 3.0.4
+
+info:
+  title: Api
+  description: Api for get cars to the garage
+  version: 0.0.1
+
+servers:
+  - url: http://localhost:8080
+    description: Server for user api
+  - url: http://bussiness-api.example.com
+    description: Api with the endpoints thar bussiness' app need
+
+paths:
+  /users:
+    post:
+      tags:
+        - Users
+      summary: Create a new user
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        "201":
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        "400":
+          description: Invalid input
+
+  /users/{userId}:
+
+    get:
+      tags:
+        - Users
+      summary: Get user by ID
+      operationId: getUserById
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: The ID of the user
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: User found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        "404":
+          description: User not found
+
+    patch:
+      tags:
+        - Users
+      summary: Update user by ID
+      operationId: updateUserById
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: The ID of the user
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        "200":
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        "400":
+          description: Invalid input
+        "404":
+          description: User not found
+
+    delete:
+      tags:
+        - Users
+      summary: Delete user by ID
+      operationId: deleteUserById
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: The ID of the user
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "204":
+          description: User deleted successfully
+        "404":
+          description: User not found
+
+
+  /residents/{userId}/cars:
+    get:
+      tags:
+        - Resident
+      summary: Get all cars from resident
+      operationId: getCarsByUserId
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: The ID of the user
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: A list of cars
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Car'
+        "404":
+          description: User not found
+
+  /resident_cars/{ownerId}/{carId}/status:
+    patch:
+      tags:
+        - ResidentCars
+      summary: Change car status
+      operationId: changeCarStatus
+      parameters:
+        - name: workerId
+          in: query
+          required: false
+          description: The id of the janitor
+          schema:
+            type: integer
+            format: int64
+        - name: ownerId
+          in: path
+          required: true
+          description: The id of the owner
+          schema:
+            type: integer
+            format: int64
+        - name: carId
+          in: path
+          required: true
+          description: The id of the car
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  allOf:
+                    - $ref: '#/components/schemas/CarStatus'
+                  description: New status for the car
+      responses:
+        "200":
+          description: Car status updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResidentCarDetailRequest'
+        "400":
+          description: Invalid status
+        "404":
+          description: Car not found
+
+    get:
+      tags:
+        - ResidentCars
+      summary: Obtain car status from user
+      operationId: getCarStatus
+      parameters:
+        - name: ownerId
+          in: path
+          required: true
+          description: The id of the owner
+          schema:
+            type: integer
+            format: int64
+        - name: carId
+          in: path
+          required: true
+          description: The id of the car
+          schema:
+            type: integer
+            format: int64
+
+        - name: workerId
+          in: query
+          required: false
+          description: The id of the janitor
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Car status obtained
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResidentCarDetailRequest'
+        "404":
+          description: Car not found
+
+  /resident_cars/requests/available:
+    get:
+      tags:
+        - ResidentCars
+      summary: Get cars available requests for janitor
+      operationId: getAvailableRequests
+      responses:
+        "200":
+          description: list of available requests
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/workerCarRequest'
+
+  /worker/{workerId}/car_requests:
+    get:
+      tags:
+        - ResidentCars
+      summary: Get car petitions managed by worker
+      operationId: getWorkerCarRequests
+      parameters:
+        - name: workerId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: list of worker car requests
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/workerCarRequest'
+        "404":
+          description: worker not found
+
+
+components:
+  schemas:
+    Car:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The car ID
+        make:
+          type: string
+          description: The car manufacturer
+        model:
+          type: string
+          description: The car model
+        license_plate:
+          type: string
+          description: The car license plate
+        parking_space:
+          type: string
+          description: Car parking space
+        image:
+          type: string
+          format: byte
+
+      required:
+        - id
+        - license_plate
+        - make
+        - model
+        - parking_space
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The user ID
+        name:
+          type: string
+          description: The user's name
+        email:
+          type: string
+          format: email
+          description: The user's email address
+        password:
+          type: string
+          format: password
+          description: The user's password
+      required:
+        - id
+        - name
+        - email
+
+    CarStatus:
+      type: string
+      enum:
+        - in_garage #worker
+        - leaving_requested #resident
+        - exiting_garage #worker
+        - leaving_cancelled #resident
+        - storing_cancelled
+        - waiting_pickup #worker
+        - storing_requested #resident
+        - to_garage #worker
+        - outside #resident
+        - unavailable
+
+    ResidentCarUser:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        profile_image:
+          type: string
+          format: byte
+          description: Base64 coded image
+      required:
+        - name
+
+    workerCarRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        parking_space:
+          type: string
+        status:
+          type: string
+        user_image:
+          type: string
+          format: byte
+        owner_id:
+          type: integer
+          format: int64
+        car_id:
+          type: integer
+          format: int64
+      required:
+        - name
+        - parking_space
+        - status
+        - car_id
+        - owner_id
+
+    ResidentCarDetailRequest:
+      type: object
+      properties:
+        status:
+          type: string
+        owner:
+          $ref: '#/components/schemas/ResidentCarUser'
+        car:
+          $ref: '#/components/schemas/Car'
+        janitor:
+          $ref: '#/components/schemas/ResidentCarUser'
+      required:
+        - status
+
+

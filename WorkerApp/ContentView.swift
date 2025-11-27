@@ -8,14 +8,18 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var selectedTab = 0
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        TabView {
+            Tab("Requests", systemImage: "tray.and.arrow.down") {
+                CarRequestList(requestType: "available")
+            }
+
+            Tab("Accepted requests", systemImage: "tray.and.arrow.up") {
+                CarRequestList(requestType: "worker", workerId: 1)
+            }
         }
-        .padding()
+
     }
 }
 

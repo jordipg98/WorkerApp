@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		69B192F92ED709B4001BD202 /* OpenAPIURLSession in Frameworks */ = {isa = PBXBuildFile; productRef = 69B192F82ED709B4001BD202 /* OpenAPIURLSession */; };
+		69B1930D2ED709F2001BD202 /* OpenAPIRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = 69B1930C2ED709F2001BD202 /* OpenAPIRuntime */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		69B192D32ED6EF0D001BD202 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -29,9 +34,33 @@
 		69B192DC2ED6EF0D001BD202 /* WorkerAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WorkerAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		69B193142ED70A6C001BD202 /* Exceptions for "WorkerApp" folder in "WorkerApp" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"openapi-generator-config.yaml",
+			);
+			target = 69B192C42ED6EF0B001BD202 /* WorkerApp */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		69B193152ED70A6C001BD202 /* Exceptions for "WorkerApp" folder in "Compile Sources" phase from "WorkerApp" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = 69B192C12ED6EF0B001BD202 /* Sources */;
+			membershipExceptions = (
+				"openapi-generator-config.yaml",
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		69B192C72ED6EF0B001BD202 /* WorkerApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				69B193142ED70A6C001BD202 /* Exceptions for "WorkerApp" folder in "WorkerApp" target */,
+				69B193152ED70A6C001BD202 /* Exceptions for "WorkerApp" folder in "Compile Sources" phase from "WorkerApp" target */,
+			);
 			path = WorkerApp;
 			sourceTree = "<group>";
 		};
@@ -52,6 +81,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				69B1930D2ED709F2001BD202 /* OpenAPIRuntime in Frameworks */,
+				69B192F92ED709B4001BD202 /* OpenAPIURLSession in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -106,12 +137,15 @@
 			buildRules = (
 			);
 			dependencies = (
+				69FDE0B92ED70B5800FEB090 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				69B192C72ED6EF0B001BD202 /* WorkerApp */,
 			);
 			name = WorkerApp;
 			packageProductDependencies = (
+				69B192F82ED709B4001BD202 /* OpenAPIURLSession */,
+				69B1930C2ED709F2001BD202 /* OpenAPIRuntime */,
 			);
 			productName = WorkerApp;
 			productReference = 69B192C52ED6EF0B001BD202 /* WorkerApp.app */;
@@ -195,6 +229,10 @@
 			);
 			mainGroup = 69B192BC2ED6EF0B001BD202;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				69B192F62ED709A5001BD202 /* XCLocalSwiftPackageReference "../../../Downloads/swift-openapi-generator" */,
+				69B192F72ED709B4001BD202 /* XCLocalSwiftPackageReference "../../../Downloads/swift-openapi-urlsession-main" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 69B192C62ED6EF0B001BD202 /* Products */;
 			projectDirPath = "";
@@ -265,6 +303,10 @@
 			isa = PBXTargetDependency;
 			target = 69B192C42ED6EF0B001BD202 /* WorkerApp */;
 			targetProxy = 69B192DD2ED6EF0D001BD202 /* PBXContainerItemProxy */;
+		};
+		69FDE0B92ED70B5800FEB090 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 69FDE0B82ED70B5800FEB090 /* OpenAPIGenerator */;
 		};
 /* End PBXTargetDependency section */
 
@@ -570,6 +612,33 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		69B192F62ED709A5001BD202 /* XCLocalSwiftPackageReference "../../../Downloads/swift-openapi-generator" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../../../Downloads/swift-openapi-generator";
+		};
+		69B192F72ED709B4001BD202 /* XCLocalSwiftPackageReference "../../../Downloads/swift-openapi-urlsession-main" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../../../Downloads/swift-openapi-urlsession-main";
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		69B192F82ED709B4001BD202 /* OpenAPIURLSession */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = OpenAPIURLSession;
+		};
+		69B1930C2ED709F2001BD202 /* OpenAPIRuntime */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = OpenAPIRuntime;
+		};
+		69FDE0B82ED70B5800FEB090 /* OpenAPIGenerator */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 69B192F62ED709A5001BD202 /* XCLocalSwiftPackageReference "../../../Downloads/swift-openapi-generator" */;
+			productName = "plugin:OpenAPIGenerator";
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 69B192BD2ED6EF0B001BD202 /* Project object */;
 }

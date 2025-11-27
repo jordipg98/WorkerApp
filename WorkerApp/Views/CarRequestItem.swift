@@ -6,13 +6,41 @@
 //
 
 import SwiftUI
+import OpenAPIURLSession
 
 struct CarRequestItem: View {
+    @Binding var request: Components.Schemas.workerCarRequest
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        NavigationLink(destination: CarRequestDetails(carId: request.car_id, ownerId: request.owner_id)) {
+            VStack {
+                HStack {
+                    Image(uiImage: ((request.user_image?.toUIImage() ?? UIImage(systemName: "person.circle")) ?? UIImage()))
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 60, height: 60)
+                        .clipShape(Circle())
+                        .padding(.trailing)
+
+                    VStack (alignment: .leading) {
+                        Text(request.name)
+                            .font(.headline)
+                        Text("P. Space: \(request.parking_space)")
+                    }
+                    Spacer()
+                    Text(CarStatus.getCarStatus(status: request.status).text)
+                        .font(.headline)
+                }
+                .padding()
+            }
+            .background(.gray)
+            .foregroundStyle(.foreground)
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .padding(.horizontal)
+        }
     }
 }
 
 #Preview {
-    CarRequestItem()
+    /*@Previewable @State var request: Components.Schemas.workerAvailableCarRequest = nil
+    CarRequestItem(request: $request)*/
 }
