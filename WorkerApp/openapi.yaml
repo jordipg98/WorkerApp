@@ -176,12 +176,8 @@ paths:
                     - $ref: '#/components/schemas/CarStatus'
                   description: New status for the car
       responses:
-        "200":
+        "204":
           description: Car status updated
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ResidentCarDetailRequest'
         "400":
           description: Invalid status
         "404":
@@ -266,6 +262,28 @@ paths:
         "404":
           description: worker not found
 
+x-websokets:
+  status-updates:
+    description: Websocket chanel to receive car status updates
+    url:  ws://localhost:8080/ws/car_status
+    messages:
+      update:
+        summary: Server sends a status change update
+        payload:
+          type: object
+          properties:
+            ownerId:
+              type: integer
+              format: int64
+            carId:
+              type: integer
+              format: int64
+            status:
+              type: string
+          required:
+            - ownerId
+            - carId
+            - status
 
 components:
   schemas:

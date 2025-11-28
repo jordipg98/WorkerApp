@@ -9,6 +9,8 @@ import SwiftUI
 import OpenAPIURLSession
 
 struct CarRequestDetails: View {
+    @StateObject private var ws: ResidentCarWebSocketService
+
     @State private var userImage: UIImage = UIImage()
     @State private var requestDetails:
     Components.Schemas.ResidentCarDetailRequest = Components.Schemas.ResidentCarDetailRequest(status: "unavailable")
@@ -54,6 +56,15 @@ struct CarRequestDetails: View {
                     .font(.title3)
             }
         }
+        .onAppear() {
+            ws.connect()
+        }
+        .onReceive(ws.$lastUpdate) { update in
+            guard let update else { return }
+            if update.carId == requestDetails.car?.id {
+                status = CarStatus.getCarStatus(status: update.status)
+            }
+        }
         .task {
             try? await getCarStatus()
         }
@@ -79,6 +90,8 @@ struct CarRequestDetails: View {
         self.client = Client(serverURL: try! Servers.Server1.url(), transport: URLSessionTransport())
         self.ownerId = ownerId
         self.carId = carId
+
+        _ws = StateObject(wrappedValue: ResidentCarWebSocketService())
     }
 
     private func getCarStatus() async throws{
@@ -112,23 +125,8 @@ struct CarRequestDetails: View {
             guard let ownerId = requestDetails.owner?.id else {return}
             guard let carId = requestDetails.car?.id else {return}
 
-            let response = try await client.changeCarStatus(Operations.changeCarStatus.Input(
+            try await client.changeCarStatus(Operations.changeCarStatus.Input(
                 path: .init(ownerId: ownerId, carId: carId), query: .init(workerId: workerId), body: .json(.init(status: Operations.changeCarStatus.Input.Body.jsonPayload.statusPayload(value1: status)))))
-            switch response {
-            case let .ok(okResponse):
-                switch okResponse.body {
-                case .json(let response):
-                    self.status = CarStatus.getCarStatus(status: response.status)
-                    self.requestDetails = response
-                }
-
-            case .undocumented(statusCode: let statusCode, _):
-                print("Error: \(statusCode)")
-            case .notFound(_):
-                print("residentCar not found")
-            case .badRequest(_):
-                print("bad request")
-            }
         } catch {
             print("Error ", error)
         }

@@ -32,7 +32,7 @@ struct CarRequestItem: View {
                 }
                 .padding()
             }
-            .background(.gray)
+            .background(Color(.secondarySystemBackground))
             .foregroundStyle(.foreground)
             .clipShape(RoundedRectangle(cornerRadius: 16))
             .padding(.horizontal)
