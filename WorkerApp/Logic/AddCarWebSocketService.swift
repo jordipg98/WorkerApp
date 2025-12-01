@@ -27,7 +27,7 @@ final class AddCarWebSocketService: ObservableObject {
     }
 
     func connect() {
-        guard let url = URL(string: "ws://192.168.1.141:8080/ws/car_status/new_request") else { return }
+        guard let url = URL(string: "ws://192.168.1.200:8080/ws/car_status/new_request") else { return }
         socket = URLSession.shared.webSocketTask(with: url)
         socket?.resume()
 
@@ -39,16 +39,9 @@ final class AddCarWebSocketService: ObservableObject {
             switch result {
             case .success(.string(let text)):
                 if let data = text.data(using: .utf8) {
-                    do {
-                        try JSONDecoder().decode(Car.self, from: data)
-                    }catch {
-                        print(error)
-                    }
                     if let update = try? JSONDecoder().decode(Car.self, from: data) {
                         DispatchQueue.main.async {
-                            print("dentro del segundo")
                             self.lastUpdate = update
-                            print(update)
                         }
                     }
                 }

@@ -15,13 +15,14 @@ struct CarRequestDetails: View {
     @State private var requestDetails:
     Components.Schemas.ResidentCarDetailRequest = Components.Schemas.ResidentCarDetailRequest(status: "unavailable")
     @State private var status: CarStatus = .unavailable
+    @State var showingAlert: Bool = false
 
     @Environment(\.dismiss) private var dismiss
 
     let ownerId: Int64
     let carId: Int64
 
-    private let workerId: Int64 = 1
+    let workerId: Int64
     var body: some View {
         List {
             Section("Car status") {
@@ -61,12 +62,23 @@ struct CarRequestDetails: View {
         }
         .onReceive(ws.$lastUpdate) { update in
             guard let update else { return }
-            if update.carId == requestDetails.car?.id {
-                status = CarStatus.getCarStatus(status: update.status)
+            if update.car_id == requestDetails.car?.id {
+                if let janitorId = update.janitor?.id, janitorId != workerId {
+                    showingAlert = true
+                } else {
+                    status = CarStatus.getCarStatus(status: update.status)
+                }
+
+
             }
         }
         .task {
             try? await getCarStatus()
+        }
+        .alert("Request accepted by another worker", isPresented: $showingAlert) {
+            Button("leave", role: .close) {
+                dismiss()
+            }
         }
         if isNextStatusButtonNeeded(currentStatus: status) {
             Button(status.buttonText) {
@@ -86,10 +98,13 @@ struct CarRequestDetails: View {
 
     let client: Client
 
-    init(carId: Int64, ownerId: Int64) {
+    init(carId: Int64, ownerId: Int64, workerId: Int64) {
         self.client = Client(serverURL: try! Servers.Server1.url(), transport: URLSessionTransport())
         self.ownerId = ownerId
         self.carId = carId
+        self.workerId = workerId
+
+        print("WORKER", workerId)
 
         _ws = StateObject(wrappedValue: ResidentCarWebSocketService())
     }
@@ -140,5 +155,5 @@ struct CarRequestDetails: View {
 }
 
 #Preview {
-    CarRequestDetails(carId: 2, ownerId: 5)
+    CarRequestDetails(carId: 2, ownerId: 5, workerId: 2)
 }

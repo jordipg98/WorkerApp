@@ -9,9 +9,10 @@ import SwiftUI
 import OpenAPIURLSession
 
 struct CarRequestItem: View {
+    var workerId: Int64
     @Binding var request: Components.Schemas.workerCarRequest
     var body: some View {
-        NavigationLink(destination: CarRequestDetails(carId: request.car_id, ownerId: request.owner_id)) {
+        NavigationLink(destination: CarRequestDetails(carId: request.car_id, ownerId: request.owner_id, workerId: workerId)) {
             VStack {
                 HStack {
                     Image(uiImage: ((request.user_image?.toUIImage() ?? UIImage(systemName: "person.circle")) ?? UIImage()))

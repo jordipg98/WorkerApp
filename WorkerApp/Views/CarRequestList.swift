@@ -24,7 +24,7 @@ struct CarRequestList: View {
                     ScrollView {
                         VStack {
                             ForEach($requests, id: \.parking_space) { request in
-                                CarRequestItem(request: request)
+                                CarRequestItem(workerId: workerId, request: request)
 
                             }
                         }
@@ -63,7 +63,13 @@ struct CarRequestList: View {
                 if requestType == "available" {
                     guard let update else { return }
                     let workerCar: Components.Schemas.workerCarRequest = Components.Schemas.workerCarRequest(name: update.name, parking_space: update.parking_space, status: update.status, user_image: update.user_image, owner_id: update.owner_id, car_id: update.car_id)
-                    requests.append(workerCar)
+
+                    if (requests.first(where: { $0.parking_space == workerCar.parking_space}) != nil) {
+                        requests.removeAll(where: { $0.parking_space == workerCar.parking_space})
+                    } else  {
+                        requests.append(workerCar)
+                    }
+
                 }
             }
         }
@@ -71,10 +77,11 @@ struct CarRequestList: View {
 
     let client: Client
 
-    init(requestType: String, workerId: Int64 = -1) {
+    init(requestType: String, workerId: Int64) {
         self.client = Client(serverURL: try! Servers.Server1.url(), transport: URLSessionTransport())
         self.requestType = requestType
         self.workerId = workerId
+        print("LIST", workerId)
 
         _ws = StateObject(wrappedValue: AddCarWebSocketService())
 

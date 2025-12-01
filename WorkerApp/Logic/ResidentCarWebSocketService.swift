@@ -17,13 +17,14 @@ final class ResidentCarWebSocketService: ObservableObject {
     @Published var lastUpdate: ResidentCarStatusUpdate?
 
     nonisolated struct ResidentCarStatusUpdate: Codable {
-        let ownerId: Int64
-        let carId: Int64
+        let owner_id: Int64
+        let car_id: Int64
         let status: String
+        let janitor: Components.Schemas.ResidentCarUser?
     }
 
     func connect() {
-        guard let url = URL(string: "ws://192.168.1.141:8080/ws/car_status/worker") else { return }
+        guard let url = URL(string: "ws://192.168.1.200:8080/ws/car_status/worker") else { return }
         socket = URLSession.shared.webSocketTask(with: url)
         socket?.resume()
 
