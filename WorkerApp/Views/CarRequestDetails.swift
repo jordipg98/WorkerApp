@@ -103,9 +103,6 @@ struct CarRequestDetails: View {
         self.ownerId = ownerId
         self.carId = carId
         self.workerId = workerId
-
-        print("WORKER", workerId)
-
         _ws = StateObject(wrappedValue: ResidentCarWebSocketService())
     }
 

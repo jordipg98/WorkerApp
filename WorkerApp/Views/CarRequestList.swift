@@ -81,7 +81,6 @@ struct CarRequestList: View {
         self.client = Client(serverURL: try! Servers.Server1.url(), transport: URLSessionTransport())
         self.requestType = requestType
         self.workerId = workerId
-        print("LIST", workerId)
 
         _ws = StateObject(wrappedValue: AddCarWebSocketService())
 
