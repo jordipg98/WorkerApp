@@ -22,7 +22,9 @@ final class AddCarWebSocketService: ObservableObject {
         let name: String
         let parking_space: String
         let status: String
-        let user_image: OpenAPIRuntime.Base64EncodedData?
+        let user_image: OpenAPIRuntime.Base64EncodedData
+
+
 
     }
 

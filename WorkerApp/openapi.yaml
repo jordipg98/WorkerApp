@@ -387,6 +387,8 @@ components:
         car_id:
           type: integer
           format: int64
+        car_name:
+          type: string
       required:
         - name
         - parking_space

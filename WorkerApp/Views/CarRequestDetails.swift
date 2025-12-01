@@ -16,6 +16,7 @@ struct CarRequestDetails: View {
     Components.Schemas.ResidentCarDetailRequest = Components.Schemas.ResidentCarDetailRequest(status: "unavailable")
     @State private var status: CarStatus = .unavailable
     @State var showingAlert: Bool = false
+    @State var alertMessage = ""
 
     @Environment(\.dismiss) private var dismiss
 
@@ -64,9 +65,14 @@ struct CarRequestDetails: View {
             guard let update else { return }
             if update.car_id == requestDetails.car?.id {
                 if let janitorId = update.janitor?.id, janitorId != workerId {
+                    alertMessage = "Request accepted by another worker"
                     showingAlert = true
-                } else {
+                }else {
                     status = CarStatus.getCarStatus(status: update.status)
+                }
+
+                if status.statusHaveToDismmiss() && !showingAlert {
+                    dismiss()
                 }
 
 
@@ -75,18 +81,15 @@ struct CarRequestDetails: View {
         .task {
             try? await getCarStatus()
         }
-        .alert("Request accepted by another worker", isPresented: $showingAlert) {
+        .alert(alertMessage, isPresented: $showingAlert) {
             Button("leave", role: .close) {
                 dismiss()
             }
         }
-        if isNextStatusButtonNeeded(currentStatus: status) {
+        if isNextStatusButtonNeeded(currentStatus: status) && status != .outside && status != .inGarage {
             Button(status.buttonText) {
                 Task {
                     try? await changeCarStatus(status: status.nextStatus.value)
-                    if status.statushaveToDismmiss() {
-                        dismiss()
-                    }
                 }
             }
             .padding()
@@ -111,7 +114,6 @@ struct CarRequestDetails: View {
             let response = try await client.getCarStatus(Operations.getCarStatus.Input(path: .init(ownerId: ownerId, carId: carId), query: .init(workerId: workerId)))
             switch response {
             case let .ok(okResponse):
-                print("ok response")
                 switch okResponse.body {
                 case .json(let response):
                     self.requestDetails = response

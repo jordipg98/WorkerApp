@@ -45,7 +45,7 @@ struct CarRequestList: View {
 
                 }
             }
-            .navigationTitle(workerId != -1 ? "Your requests" : "Pending Requests")
+            .navigationTitle(requestType != "available" ? "Your requests" : "Pending Requests")
             .task {
                 if requestType == "available" {
                     try? await getAvailableRequests()
@@ -63,13 +63,9 @@ struct CarRequestList: View {
                 if requestType == "available" {
                     guard let update else { return }
                     let workerCar: Components.Schemas.workerCarRequest = Components.Schemas.workerCarRequest(name: update.name, parking_space: update.parking_space, status: update.status, user_image: update.user_image, owner_id: update.owner_id, car_id: update.car_id)
-
-                    if (requests.first(where: { $0.parking_space == workerCar.parking_space}) != nil) {
-                        requests.removeAll(where: { $0.parking_space == workerCar.parking_space})
-                    } else  {
+                    if requests.first(where: {$0.parking_space == workerCar.parking_space && $0.status == workerCar.status}) == nil {
                         requests.append(workerCar)
                     }
-
                 }
             }
         }
@@ -110,6 +106,7 @@ struct CarRequestList: View {
             switch okResponse.body {
             case .json(let requests):
                 self.requests = requests
+
             }
         case .undocumented(statusCode: let statusCode, _):
             print("Error \(statusCode)")

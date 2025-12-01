@@ -92,7 +92,7 @@ enum CarStatus {
         }
     }
 
-    func statushaveToDismmiss() -> Bool {
+    func statusHaveToDismmiss() -> Bool {
         [.outside, .inGarage].contains(self)
     }
 
