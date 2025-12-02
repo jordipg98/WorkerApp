@@ -12,11 +12,11 @@ struct ContentView: View {
     var body: some View {
         TabView {
             Tab("Requests", systemImage: "tray.and.arrow.down") {
-                CarRequestList(requestType: "available", workerId: 2)
+                CarRequestList(requestType: "available", workerId: 1)
             }
 
             Tab("Accepted requests", systemImage: "tray.and.arrow.up") {
-                CarRequestList(requestType: "worker", workerId: 2)
+                CarRequestList(requestType: "worker", workerId: 1)
             }
         }
 

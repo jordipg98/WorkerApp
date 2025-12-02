@@ -58,21 +58,40 @@ struct CarRequestDetails: View {
                     .font(.title3)
             }
         }
+        .alert(alertMessage, isPresented: $showingAlert) {
+            Button("leave", role: .close) {
+                dismiss()
+            }
+        }
         .onAppear() {
             ws.connect()
         }
         .onReceive(ws.$lastUpdate) { update in
-            guard let update else { return }
-            if update.car_id == requestDetails.car?.id {
+            print("receive")
+            guard let update,
+                  let userId = requestDetails.owner?.id,
+                  let carId = requestDetails.car?.id else { return }
+
+            if update.car_id == carId && update.owner_id == userId {
+                let newStatus = CarStatus.getCarStatus(status: update.status)
                 if let janitorId = update.janitor?.id, janitorId != workerId {
                     alertMessage = "Request accepted by another worker"
                     showingAlert = true
-                }else {
-                    status = CarStatus.getCarStatus(status: update.status)
+                    return
+                } else if update.janitor == nil && newStatus.statusHaveToDismmiss() &&
+                            (self.status == .leavingRequested || self.status == .storingRequested){
+                    print("dentro")
+                    alertMessage = "The request was cancelled"
+                    showingAlert = true
+                    return
                 }
+                print("sigue")
+                status = newStatus
 
-                if status.statusHaveToDismmiss() && !showingAlert {
-                    dismiss()
+                if newStatus.statusHaveToDismmiss() {
+                    DispatchQueue.main.async {
+                        dismiss()
+                    }
                 }
 
 
@@ -81,15 +100,12 @@ struct CarRequestDetails: View {
         .task {
             try? await getCarStatus()
         }
-        .alert(alertMessage, isPresented: $showingAlert) {
-            Button("leave", role: .close) {
-                dismiss()
-            }
-        }
+
         if isNextStatusButtonNeeded(currentStatus: status) && status != .outside && status != .inGarage {
             Button(status.buttonText) {
                 Task {
                     try? await changeCarStatus(status: status.nextStatus.value)
+
                 }
             }
             .padding()
@@ -149,7 +165,7 @@ struct CarRequestDetails: View {
     private func isNextStatusButtonNeeded(currentStatus: CarStatus) -> Bool {
         ![.inGarage, .outside, .unavailable].contains(currentStatus)
     }
-    
+
 }
 
 #Preview {

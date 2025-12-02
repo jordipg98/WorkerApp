@@ -23,9 +23,7 @@ final class AddCarWebSocketService: ObservableObject {
         let parking_space: String
         let status: String
         let user_image: OpenAPIRuntime.Base64EncodedData
-
-
-
+        let deleted: Bool
     }
 
     func connect() {
@@ -36,6 +34,10 @@ final class AddCarWebSocketService: ObservableObject {
         listen()
     }
 
+    func disconect() {
+        socket?.cancel(with: .normalClosure, reason: nil)
+        socket = nil
+    }
     func listen() {
         socket?.receive { result in
             switch result {
@@ -54,6 +56,8 @@ final class AddCarWebSocketService: ObservableObject {
             case .failure(let error):
                 print("WebSocketError: ", error)
             }
+
+            guard self.socket?.state == .running else { return }
 
             self.listen()
 

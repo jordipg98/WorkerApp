@@ -59,13 +59,25 @@ struct CarRequestList: View {
                     ws.connect()
                 }
             }
+            .onDisappear(){
+                if requestType == "available" && hasConnectedWS {
+                    hasConnectedWS = false
+                    ws.disconect()
+                }
+            }
             .onReceive(ws.$lastUpdate) { update in
                 if requestType == "available" {
                     guard let update else { return }
                     let workerCar: Components.Schemas.workerCarRequest = Components.Schemas.workerCarRequest(name: update.name, parking_space: update.parking_space, status: update.status, user_image: update.user_image, owner_id: update.owner_id, car_id: update.car_id)
-                    if requests.first(where: {$0.parking_space == workerCar.parking_space && $0.status == workerCar.status}) == nil {
-                        requests.append(workerCar)
+
+                    if !update.deleted {
+                        if requests.first(where: {$0.parking_space == workerCar.parking_space && $0.status == workerCar.status}) == nil {
+                            requests.append(workerCar)
+                        }
+                    } else {
+                        requests.removeAll(where: {$0.parking_space == workerCar.parking_space})
                     }
+
                 }
             }
         }
