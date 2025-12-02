@@ -136,8 +136,7 @@ struct CarRequestDetails: View {
                 print("Status inválido:", status)
                 return
             }
-            guard let ownerId = requestDetails.owner?.id else {return}
-            guard let carId = requestDetails.car?.id else {return}
+            guard let ownerId = requestDetails.owner?.id, let carId = requestDetails.car?.id else {return}
 
             try await client.changeCarStatus(Operations.changeCarStatus.Input(
                 path: .init(ownerId: ownerId, carId: carId), query: .init(workerId: workerId), body: .json(.init(status: Operations.changeCarStatus.Input.Body.jsonPayload.statusPayload(value1: status)))))

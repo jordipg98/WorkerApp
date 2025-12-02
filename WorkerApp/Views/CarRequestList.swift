@@ -10,13 +10,13 @@ import OpenAPIURLSession
 
 struct CarRequestList: View {
     @StateObject private var ws: AddCarWebSocketService
-
     @State private var hasConnectedWS = false
-
     @State private var requests: [Components.Schemas.workerCarRequest] = []
+    @State private var isDataLoaded = false
+
     let requestType: String
     let workerId: Int64
-    @State private var isDataLoaded = false
+
     var body: some View {
         NavigationView {
             VStack(){

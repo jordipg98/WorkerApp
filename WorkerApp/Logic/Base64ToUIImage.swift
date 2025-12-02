@@ -9,15 +9,13 @@ import OpenAPIRuntime
 import SwiftUI
 
 extension Base64EncodedData {
-    func toUIImage() -> UIImage? {
-            let fileData = Data(self.data)
-            if let base64String = String(data: fileData, encoding: .utf8) {
-                if let imageData = Data(base64Encoded: base64String, options: .ignoreUnknownCharacters) {
-                    if let image = UIImage(data: imageData) {
-                        return image
-                    }
-                }
-            }
-        return nil
+    func toUIImage() -> UIImage {
+        let fileData = Data(self.data)
+
+        guard let base64String = String(data: fileData, encoding: .utf8),
+              let imageData = Data(base64Encoded: base64String, options: .ignoreUnknownCharacters),
+              let image = UIImage(data: imageData) else { return UIImage() }
+
+        return image
     }
 }
